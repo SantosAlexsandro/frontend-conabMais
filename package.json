@@ -2,6 +2,7 @@
   "name": "youtube-curso-react-materialui-typescript",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://erpteste.conab.com.br:7211",
   "scripts": {
     "start": "set PORT=8080 && react-scripts start",
     "build": "set PORT=8080 && react-scripts build",

@@ -1,46 +1,40 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, Grid, LinearProgress, Paper, Typography, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { VTextField, VForm, useVForm, IVFormErrors } from '../../shared/forms';
-import { AutoCompleteCidade } from './components/AutoCompleteCidade';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
 interface ICategoria {
   Operacao: string;
   Codigo: string;
-  AtivaTabelaPreco: 'Sim' | 'Não'; // Definindo os valores aceitos como "Sim" ou "Não"
 }
 
 interface IFormData {
   Nome: string;
   CodigoRegiao: string;
-  CaracteristicaImovel: number;
-  Categorias: ICategoria[]; // Um array de categorias
+  CaracteristicaImovel: number; // Use 'number' se espera um número aqui
+  Categorias: ICategoria[]; // Array de categorias
 }
-const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  // cidadeId: yup.number().required(),
-  Nome: yup.string().required(),
-  CodigoRegiao: yup.string().required(),
-  CaracteristicaImovel: yup.number().required(),
 
-  // Validação do array de categorias
+const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
+  Nome: yup.string().required('Nome é obrigatório.'),
+  CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
+  CaracteristicaImovel: yup.number().required('Características do imóvel são obrigatórias.'),
   Categorias: yup
     .array()
     .of(
       yup.object().shape({
-        Operacao: yup.string().required('Operação é obrigatória'),
-        Codigo: yup.string().required('Código é obrigatório'),
-        AtivaTabelaPreco: yup
-          .mixed<'Sim' | 'Não'>()
-          .oneOf(['Sim', 'Não'], 'AtivaTabelaPreco deve ser Sim ou Não')
-          .required('AtivaTabelaPreco é obrigatória'),
+        Operacao: yup.string().required('Operação é obrigatória.'),
+        Codigo: yup.string().required('Código é obrigatório.'),
       })
     )
-    .min(1, 'Pelo menos uma categoria é necessária'), // Valida se há pelo menos uma categoria no array
+    .required()
+    .min(1, 'Deve haver pelo menos uma categoria.')
+    .default([]),
 });
 
 export const EntitiesDetail: React.FC = () => {
@@ -50,56 +44,43 @@ export const EntitiesDetail: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState('');
+  const [categorias, setCategorias] = useState<ICategoria[]>([{ Operacao: '', Codigo: ''}]); // Inicia com uma categoria
 
   useEffect(() => {
     if (id !== 'nova') {
       setIsLoading(true);
-
       PessoasService.getById(Number(id)).then((result) => {
         setIsLoading(false);
-
         if (result instanceof Error) {
           alert(result.message);
           navigate('/pessoas');
         } else {
           setNome(result.Nome);
           formRef.current?.setData(result);
+          setCategorias(result.Categorias || [{ Operacao: '', Codigo: '' }]);
         }
       });
     } else {
       formRef.current?.setData({
-        email: '',
-        nomeCompleto: '',
-        cidadeId: undefined,
+        Nome: '',
+        CodigoRegiao: '',
+        CaracteristicaImovel: undefined,
+        Categorias: [{ Operacao: '', Codigo: '' }],
       });
     }
   }, [id]);
 
   const handleSave = (dados: IFormData) => {
     console.log('dados', dados);
-    const { Nome, CodigoRegiao, CaracteristicaImovel, Categorias } = dados;
-
-    // Criando o payload
-    const payload = {
-      Nome,
-      CodigoRegiao,
-      CaracteristicaImovel,
-      Categorias: Categorias.map(({ Operacao, Codigo, AtivaTabelaPreco }) => ({
-        Operacao,
-        Codigo,
-        AtivaTabelaPreco,
-      })),
-    };
-
-    formValidationSchema
-      .validate(payload, { abortEarly: false })
+    
+    formValidationSchema.validate(dados, { abortEarly: false })
       .then((dadosValidados) => {
         setIsLoading(true);
+        const saveData = { ...dadosValidados, Categorias: categorias };
 
         if (id === 'nova') {
-          PessoasService.create(dadosValidados).then((result) => {
+          PessoasService.create(saveData).then((result) => {
             setIsLoading(false);
-
             if (result instanceof Error) {
               console.log(result.message);
             } else {
@@ -111,12 +92,8 @@ export const EntitiesDetail: React.FC = () => {
             }
           });
         } else {
-          PessoasService.updateById(Number(id), {
-            id: Number(id),
-            ...dadosValidados,
-          }).then((result) => {
+          PessoasService.updateById(Number(id), { id: Number(id), ...saveData }).then((result) => {
             setIsLoading(false);
-
             if (result instanceof Error) {
               alert(result.message);
             } else {
@@ -129,13 +106,10 @@ export const EntitiesDetail: React.FC = () => {
       })
       .catch((errors: yup.ValidationError) => {
         const validationErrors: IVFormErrors = {};
-
         errors.inner.forEach((error) => {
           if (!error.path) return;
-
           validationErrors[error.path] = error.message;
         });
-
         formRef.current?.setErrors(validationErrors);
       });
   };
@@ -151,6 +125,15 @@ export const EntitiesDetail: React.FC = () => {
         }
       });
     }
+  };
+
+  const handleAddCategoria = () => {
+    setCategorias([...categorias, { Operacao: '', Codigo: '' }]);
+  };
+
+  const handleRemoveCategoria = (index: number) => {
+    const updatedCategorias = categorias.filter((_, i) => i !== index);
+    setCategorias(updatedCategorias);
   };
 
   return (
@@ -223,37 +206,54 @@ export const EntitiesDetail: React.FC = () => {
               </Grid>
             </Grid>
 
+            {/* Aqui começa a seção de categorias */}
             <Grid container item direction='row' spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <VTextField
-                  fullWidth
-                  name='Operacao'
-                  label='Operação'
-                  disabled={isLoading}
-                />
+              <Grid item xs={12}>
+                <Typography variant='h6'>Categorias</Typography>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <VTextField
-                  fullWidth
-                  name='Codigo'
-                  label='Código'
-                  disabled={isLoading}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <VTextField
-                  fullWidth
-                  name='AtivaTabelaPreco'
-                  label='Ativa tabela de preço'
-                  disabled={isLoading}
-                />
+              {categorias.map((categoria, index) => (
+                <Grid container item key={index} spacing={2}>
+                  <Grid item xs={4}>
+                    <VTextField
+                      fullWidth
+                      name={`Categorias[${index}].Operacao`}
+                      label='Operação'
+                      value={categoria.Operacao}
+                      onChange={(e) => {
+                        const updatedCategorias = [...categorias];
+                        updatedCategorias[index].Operacao = e.target.value;
+                        setCategorias(updatedCategorias);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <VTextField
+                      fullWidth
+                      name={`Categorias[${index}].Codigo`}
+                      label='Código'
+                      value={categoria.Codigo}
+                      onChange={(e) => {
+                        const updatedCategorias = [...categorias];
+                        updatedCategorias[index].Codigo = e.target.value;
+                        setCategorias(updatedCategorias);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => handleRemoveCategoria(index)}>Remover</Button>
+                  </Grid>
+                </Grid>
+              ))}
+              <Grid item>
+                <Button onClick={handleAddCategoria}>Adicionar Categoria</Button>
               </Grid>
             </Grid>
+            {/* Fim da seção de categorias */}
 
-            <Grid container item direction='row' spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                {/*<AutoCompleteCidade isExternalLoading={isLoading} />*/}
-              </Grid>
+            <Grid item>
+              <Button type='submit' variant='contained' color='primary' disabled={isLoading}>
+                Salvar
+              </Button>
             </Grid>
           </Grid>
         </Box>
