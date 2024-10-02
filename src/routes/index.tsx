@@ -25,12 +25,12 @@ export const AppRoutes = () => {
       {
         icon: 'people',
         path: '/entidades',
-        label: 'Entidades',
+        label: 'Entidades Prospects',
       },
       {
         icon: 'build',
         path: '/pre-orcamentos',
-        label: 'Ocorrências',
+        label: 'Ocorrências Externas',
       }
     ]);
   }, []);

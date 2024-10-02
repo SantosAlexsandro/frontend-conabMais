@@ -56,7 +56,7 @@ export const Dashboard = () => {
               <Card>
                 <CardContent>
                   <Typography variant='h5' align='center'>
-                    Total de pessoas
+                    Total de Entidades Prospects
                   </Typography>
 
                   <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
@@ -80,7 +80,7 @@ export const Dashboard = () => {
               <Card>
                 <CardContent>
                   <Typography variant='h5' align='center'>
-                    Total de cidades
+                    Total de Ocorrências Externas
                   </Typography>
 
                   <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
@@ -90,8 +90,8 @@ export const Dashboard = () => {
                       </Typography>
                     )}
                     {isLoadingCidades && (
-                      <Typography variant='h6'>
-                        Carregando...
+                      <Typography variant='h1'>
+                        {totalCountCidades}
                       </Typography>
                     )}
                   </Box>

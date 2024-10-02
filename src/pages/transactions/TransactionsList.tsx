@@ -32,7 +32,7 @@ export const TransactionsList: React.FC = () => {
 
   const [rows, setRows] = useState<ITransactionList[]>([]);
   console.log(rows);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
 
   const busca = useMemo(() => {
@@ -43,6 +43,7 @@ export const TransactionsList: React.FC = () => {
     return Number(searchParams.get('pagina') || '1');
   }, [searchParams]);
 
+  /*
   useEffect(() => {
     setIsLoading(true);
 
@@ -60,7 +61,7 @@ export const TransactionsList: React.FC = () => {
         }
       });
     });
-  }, [busca, pagina]);
+  }, [busca, pagina]);*/
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
@@ -79,12 +80,12 @@ export const TransactionsList: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo="Listagem de transações"
+      titulo='Ocorrências Externas'
       barraDeFerramentas={
         <FerramentasDaListagem
           mostrarInputBusca
           textoDaBusca={busca}
-          textoBotaoNovo="Novo"
+          textoBotaoNovo='Novo'
           aoClicarEmNovo={() => navigate('/pre-orcamentos/detalhe/nova')}
           aoMudarTextoDeBusca={(texto) =>
             setSearchParams({ busca: texto, pagina: '1' }, { replace: true })
@@ -94,7 +95,7 @@ export const TransactionsList: React.FC = () => {
     >
       <TableContainer
         component={Paper}
-        variant="outlined"
+        variant='outlined'
         sx={{ m: 1, width: 'auto' }}
       >
         <Table>
@@ -104,9 +105,7 @@ export const TransactionsList: React.FC = () => {
               <TableCell>Tipo</TableCell>
               <TableCell>Nº</TableCell>
               <TableCell>Data</TableCell>
-              <TableCell>Previsão Chegada</TableCell>
               <TableCell>Cliente</TableCell>
-              <TableCell>Valor total (Serviço + PCs)</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
@@ -114,11 +113,11 @@ export const TransactionsList: React.FC = () => {
             {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleDelete(row.id)}>
+                  <IconButton size='small' onClick={() => handleDelete(row.id)}>
                     <Icon>delete</Icon>
                   </IconButton>
                   <IconButton
-                    size="small"
+                    size='small'
                     onClick={() => navigate(`/items/detail/${row.id}`)}
                   >
                     <Icon>edit</Icon>
@@ -129,19 +128,7 @@ export const TransactionsList: React.FC = () => {
                 <TableCell>
                   {moment(row.transaction_date).format('DD/MM/YYYY')}
                 </TableCell>
-                <TableCell>
-                  {moment(row.defected_items_arrival_date).format('L')}
-                </TableCell>
                 <TableCell>{rows[0]?.Entity?.entity_first_name}</TableCell>
-                <TableCell>
-                  {row.transaction_total_amount !== undefined &&
-                  row.transaction_total_amount !== null
-                    ? row.transaction_total_amount.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })
-                    : 'Não informado'}
-                </TableCell>
                 <TableCell>{row.transaction_status}</TableCell>
               </TableRow>
             ))}
@@ -155,7 +142,7 @@ export const TransactionsList: React.FC = () => {
             {isLoading && (
               <TableRow>
                 <TableCell colSpan={3}>
-                  <LinearProgress variant="indeterminate" />
+                  <LinearProgress variant='indeterminate' />
                 </TableCell>
               </TableRow>
             )}

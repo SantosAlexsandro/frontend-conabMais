@@ -138,7 +138,7 @@ export const EntitiesDetail: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Nova entidade' : nome}
+      titulo={id === 'nova' ? 'Nova Entidade Prospect' : nome}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           textoBotaoNovo='Nova'
@@ -248,12 +248,7 @@ export const EntitiesDetail: React.FC = () => {
                 <Button onClick={handleAddCategoria}>Adicionar Categoria</Button>
               </Grid>
             </Grid>
-            {/* Fim da seção de categorias */}
-
             <Grid item>
-              <Button type='submit' variant='contained' color='primary' disabled={isLoading}>
-                Salvar
-              </Button>
             </Grid>
           </Grid>
         </Box>

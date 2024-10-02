@@ -101,7 +101,7 @@ export const TransactionsDetail: React.FC = () => {
   };
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Novo Pré-orçamento' : nome}
+      titulo={id === 'nova' ? 'Nova Ocorrência Externa' : nome}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           aoClicarEmSalvar={handleSubmit(handleSave)}
@@ -295,28 +295,6 @@ export const TransactionsDetail: React.FC = () => {
               </Grid>
             </Grid>
 
-            <Grid container item direction="row" spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Total (Serviço + Peças)"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">R$</InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: 0, // Limita para valores positivos
-                    step: '0.01', // Permite casas decimais
-                  }}
-                  disabled={isLoading}
-                  {...register('transaction_total_amount')}
-                  error={!!errors.transaction_total_amount}
-                  helperText={errors.transaction_total_amount?.message}
-                />
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Box>
