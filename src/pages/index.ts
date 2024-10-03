@@ -1,6 +1,3 @@
-export * from './items/ItemsList';
-export * from './items/ItemsDetail';
-
 export * from './entities/EntitiesList';
 export * from './entities/EntitiesDetail';
 

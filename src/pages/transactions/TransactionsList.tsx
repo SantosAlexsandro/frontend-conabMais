@@ -86,7 +86,7 @@ export const TransactionsList: React.FC = () => {
           mostrarInputBusca
           textoDaBusca={busca}
           textoBotaoNovo='Novo'
-          aoClicarEmNovo={() => navigate('/pre-orcamentos/detalhe/nova')}
+          aoClicarEmNovo={() => navigate('/ocorrencias-externas/detalhe/nova')}
           aoMudarTextoDeBusca={(texto) =>
             setSearchParams({ busca: texto, pagina: '1' }, { replace: true })
           }

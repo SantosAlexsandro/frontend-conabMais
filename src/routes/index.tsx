@@ -4,8 +4,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDrawerContext } from '../shared/contexts';
 import {
   Dashboard,
-  ItemsDetail,
-  ItemsList,
   EntitiesDetail,
   EntitiesList,
   TransactionsList,
@@ -24,12 +22,12 @@ export const AppRoutes = () => {
       },
       {
         icon: 'people',
-        path: '/entidades',
+        path: '/entidades-prospects',
         label: 'Entidades Prospects',
       },
       {
         icon: 'build',
-        path: '/pre-orcamentos',
+        path: '/ocorrencias-externas',
         label: 'Ocorrências Externas',
       }
     ]);
@@ -39,14 +37,11 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/pagina-inicial" element={<Dashboard />} />
 
-      <Route path="/pre-orcamentos" element={< TransactionsList />} />
-      <Route path="/pre-orcamentos/detalhe/:id" element={<TransactionsDetail />} />
+      <Route path="/ocorrencias-externas" element={< TransactionsList />} />
+      <Route path="/ocorrencias-externas/detalhe/:id" element={<TransactionsDetail />} />
 
-      <Route path="/items" element={<ItemsList />} />
-      <Route path="/items/detail/:id" element={<ItemsDetail />} />
-
-      <Route path="/entidades" element={<EntitiesList />} />
-      <Route path="/entidades/detalhe/:id" element={<EntitiesDetail />} />
+      <Route path="/entidades-prospects" element={<EntitiesList />} />
+      <Route path="/entidades-prospects/detalhe/:id" element={<EntitiesDetail />} />
 
       <Route path="*" element={<Navigate to="/pagina-inicial" />} />
     </Routes>

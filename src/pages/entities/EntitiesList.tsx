@@ -29,7 +29,6 @@ export const EntitiesList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce();
   const navigate = useNavigate();
-  const [data, setData] = useState();
 
   const [rows, setRows] = useState<IListagemPessoa[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,11 +42,10 @@ export const EntitiesList: React.FC = () => {
     return Number(searchParams.get('pagina') || '1');
   }, [searchParams]);
 
-  /*
+
   useEffect(() => {
     setIsLoading(true);
 
-  
     debounce(() => {
       PessoasService.getAll(pagina, busca).then((result) => {
         setIsLoading(false);
@@ -62,7 +60,7 @@ export const EntitiesList: React.FC = () => {
         }
       });
     });
-  }, [busca, pagina]);*/
+  }, [busca, pagina]);
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
@@ -87,7 +85,7 @@ export const EntitiesList: React.FC = () => {
           mostrarInputBusca
           textoDaBusca={busca}
           textoBotaoNovo='Nova'
-          aoClicarEmNovo={() => navigate('/entidades/detalhe/nova')}
+          aoClicarEmNovo={() => navigate('/entidades-prospects/detalhe/nova')}
           aoMudarTextoDeBusca={(texto) =>
             setSearchParams({ busca: texto, pagina: '1' }, { replace: true })
           }
