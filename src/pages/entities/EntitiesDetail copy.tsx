@@ -38,7 +38,7 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
 });
 
 export const EntitiesDetail: React.FC = () => {
-  const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
+  const { formRef, save, saveAndClose, isSaveAndClose } = useVForm(); // TODO: Delete
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
 

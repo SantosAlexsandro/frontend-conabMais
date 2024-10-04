@@ -16,6 +16,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
+import { AutoCompleteRegiao } from './components/AutoCompleteRegiao';
 
 interface ICategoria {
   Operacao: string;
@@ -130,12 +131,12 @@ export const EntitiesDetail: React.FC = () => {
             <Grid2 container direction='row' spacing={2}>
               <Grid2
                 sx={{
-                  gridColumn: {
-                    xs: 'span 12',
-                    sm: 'span 12',
-                    md: 'span 6',
-                    lg: 'span 4',
-                    xl: 'span 2',
+                  width: {
+                    xs: '100%',  // 100% da largura em dispositivos pequenos
+                    sm: '100%',
+                    md: '50%',   // 50% da largura em dispositivos médios
+                    lg: '33%',   // 33% da largura em dispositivos grandes
+                    xl: '25%'    // 25% da largura em dispositivos extra grandes
                   },
                 }}
               >
@@ -159,7 +160,24 @@ export const EntitiesDetail: React.FC = () => {
               </Grid2>
             </Grid2>
 
+            <Grid2  container direction='row' spacing={2}>
+              <Grid2
+                sx={{
+                  width: {
+                    xs: '100%',  // 100% da largura em dispositivos pequenos
+                    sm: '100%',
+                    md: '50%',   // 50% da largura em dispositivos médios
+                    lg: '33%',   // 33% da largura em dispositivos grandes
+                    xl: '25%'    // 25% da largura em dispositivos extra grandes
+                  },
+                  
+                }}
+              >
+                <AutoCompleteRegiao />
+              </Grid2>
+            </Grid2>
 
+            
           </Grid2>
         </Box>
       </Box>
