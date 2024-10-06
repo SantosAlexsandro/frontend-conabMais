@@ -13,12 +13,10 @@ interface ICategoria {
   Codigo: string;
 }
 
-export interface IDetalhePessoa {
+export interface IDetalheEntidade {
   id: number;
   Nome: string;
-  CodigoRegiao: string;
-  CaracteristicaImovel: number;
-  Categorias: ICategoria[]; // Array de categorias
+  // CodigoRegiao: string;
 }
 
 type TPessoasComTotalCount = {
@@ -52,7 +50,7 @@ const getAll = async (
   }
 };
 
-const getById = async (id: number): Promise<IDetalhePessoa | Error> => {
+const getById = async (id: number): Promise<IDetalheEntidade | Error> => {
   try {
     const { data } = await Api.get(`/pessoas/${id}`);
 
@@ -70,10 +68,10 @@ const getById = async (id: number): Promise<IDetalhePessoa | Error> => {
 };
 
 const create = async (
-  dados: Omit<IDetalhePessoa, 'id'>
+  dados: Omit<IDetalheEntidade, 'id'>
 ): Promise<number | Error> => {
   try {
-    const { data } = await Api.post<IDetalhePessoa>(
+    const { data } = await Api.post<IDetalheEntidade>(
       '/api/Entidade/InserirAlterarEntidade',
       dados
     );
@@ -93,7 +91,7 @@ const create = async (
 
 const updateById = async (
   id: number,
-  dados: IDetalhePessoa
+  dados: IDetalheEntidade
 ): Promise<void | Error> => {
   try {
     await Api.put(`/pessoas/${id}`, dados);

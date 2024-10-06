@@ -1,3 +1,6 @@
+
+/* eslint-disable */
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { Box, Grid, LinearProgress, Paper, Typography, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';

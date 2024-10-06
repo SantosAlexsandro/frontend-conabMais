@@ -18,15 +18,14 @@ type TCidadesComTotalCount = {
 
 const getAll = async (
   page = 1,
-  filter = '',
+  filter = '', //TODO: Retirar se Riosoft não tiver filter para buscar nome e código
   id = ''
 ): Promise<TCidadesComTotalCount | Error> => {
   try {
     const urlRelativa =
-      '/api/Regiao/RetrievePage?filter&order=&pageSize=4000&pageIndex=1';
+      `/api/Regiao/RetrievePage?filter&order=&pageSize=${Environment.LIMITE_DE_LINHAS}&pageIndex=1`;
     //const urlRelativa = `/cidades?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}&id_like=${id}`;
     const { data, headers } = await Api.get(urlRelativa);
-    console.log(urlRelativa);
     if (data) {
       return {
         data,
@@ -38,7 +37,7 @@ const getAll = async (
 
     return new Error('Erro ao listar os registros.');
   } catch (error) {
-    console.error(error);
+    console.error('ERROR OBTER REGIOES', error);
     return new Error(
       (error as { message: string }).message || 'Erro ao listar os registros.'
     );

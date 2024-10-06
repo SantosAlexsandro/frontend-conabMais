@@ -6,17 +6,18 @@ import {
   LinearProgress,
   Paper,
   Typography,
-  Button,
-  TextField,
+  Button
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { AutoCompleteRegiao } from './components/AutoCompleteRegiao';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { RTextField } from '../../shared/forms/RTextField';
 
 interface ICategoria {
   Operacao: string;
@@ -26,71 +27,60 @@ interface ICategoria {
 interface IFormData {
   Nome: string;
   CodigoRegiao: string;
-  CaracteristicaImovel: number; // Use 'number' se espera um número aqui
-  Categorias: ICategoria[]; // Array de categorias
 }
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  Nome: yup.string().required('Nome é obrigatório.'),
-  CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
-  CaracteristicaImovel: yup
-    .number()
-    .required('Características do imóvel são obrigatórias.'),
-  Categorias: yup
-    .array()
-    .of(
-      yup.object().shape({
-        Operacao: yup.string().required('Operação é obrigatória.'),
-        Codigo: yup.string().required('Código é obrigatório.'),
-      })
-    )
-    .required()
-    .min(1, 'Deve haver pelo menos uma categoria.')
-    .default([]),
+  Nome: yup
+    .string()
+    .required('Nome é obrigatório')
+    .min(3, 'Mínimo de 3 caracteres'),
+  CodigoRegiao: yup.string().required('Código da região é obrigatório.')
 });
 
 export const EntitiesDetail: React.FC = () => {
-  const { reset, handleSubmit, control } = useForm();
+  const methods = useForm<IFormData>({
+    resolver: yupResolver(formValidationSchema),
+    mode: 'onSubmit', // Valida apenas ao tentar enviar o formulário
+    defaultValues: {
+      Nome: '', // Define o valor inicial de Nome como string vazia
+      // Outros campos podem ser adicionados aqui
+    },
+  });
+
+  const {
+    reset,
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    clearErrors,
+  } = methods;
+
+  if (Object.keys(errors).length > 0) {
+    console.log('Erros de validação encontrados:', errors);
+  }
+
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
-
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState('');
-  const [categorias, setCategorias] = useState<ICategoria[]>([
-    { Operacao: '', Codigo: '' },
-  ]); // Inicia com uma categoria
 
-  useEffect(() => {
-    if (id !== 'nova') {
-      setIsLoading(true);
-      PessoasService.getById(Number(id)).then((result) => {
+  const onSubmit = (dados: IFormData) => {
+    console.log('INIT ON SUBMIT', dados);
+    setIsLoading(true);
+    const saveData = { ...dados }; // Agora não precisa fazer validação manual, dados já validados
+
+    if (id === 'nova') {
+      console.log('INIT CREATE', id);
+      PessoasService.create(saveData).then((result) => {
         setIsLoading(false);
         if (result instanceof Error) {
-          alert(result.message);
-          navigate('/pessoas');
-        } else {
-          setNome(result.Nome);
-          reset(result); // Define todos os campos do formulário com os dados do result
-          setCategorias(result.Categorias || [{ Operacao: '', Codigo: '' }]);
+          console.log('erro', result.message);
+          // Aqui você pode, opcionalmente, setar um erro customizado no form
+          // setError('form', { type: 'manual', message: result.message });
         }
       });
-    } else {
-      reset({
-        Nome: '',
-        CodigoRegiao: '',
-        CaracteristicaImovel: undefined,
-        Categorias: [{ Operacao: '', Codigo: '' }],
-      });
     }
-  }, [id]);
-
-  const handleAddCategoria = () => {
-    setCategorias([...categorias, { Operacao: '', Codigo: '' }]);
-  };
-
-  const handleRemoveCategoria = (index: number) => {
-    const updatedCategorias = categorias.filter((_, i) => i !== index);
-    setCategorias(updatedCategorias);
   };
 
   return (
@@ -102,15 +92,15 @@ export const EntitiesDetail: React.FC = () => {
           mostrarBotaoSalvarEFechar
           mostrarBotaoNovo={id !== 'nova'}
           mostrarBotaoApagar={id !== 'nova'}
-          // aoClicarEmSalvar={handleSubmit(onSubmit)} // TODO: Verificar como é acionado o onSubmit
-          // aoClicarEmSalvarEFechar={saveAndClose}
+          aoClicarEmSalvar={handleSubmit(onSubmit)}
           aoClicarEmVoltar={() => navigate('/entidades')}
-          // aoClicarEmApagar={() => handleDelete(Number(id))}
           aoClicarEmNovo={() => navigate('/entidades/detalhe/nova')}
         />
       }
     >
-      <Box component='form'>
+      <FormProvider {...methods}>
+        {' '}
+        {/* Agora todos os campos dentro de FormProvider terão acesso ao context */}
         <Box
           margin={1}
           display='flex'
@@ -127,60 +117,47 @@ export const EntitiesDetail: React.FC = () => {
             <Grid2>
               <Typography variant='h6'>Geral</Typography>
             </Grid2>
-
             <Grid2 container direction='row' spacing={2}>
               <Grid2
                 sx={{
                   width: {
-                    xs: '100%',  // 100% da largura em dispositivos pequenos
+                    xs: '100%', // 100% da largura em dispositivos pequenos
                     sm: '100%',
-                    md: '50%',   // 50% da largura em dispositivos médios
-                    lg: '33%',   // 33% da largura em dispositivos grandes
-                    xl: '25%'    // 25% da largura em dispositivos extra grandes
+                    md: '50%', // 50% da largura em dispositivos médios
+                    lg: '33%', // 33% da largura em dispositivos grandes
+                    xl: '25%', // 25% da largura em dispositivos extra grandes
                   },
                 }}
               >
-                <Controller
+                <RTextField
+                  fullWidth
                   name='Nome'
-                  control={control}
-                  defaultValue=''
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label='Nome'
-                      disabled={isLoading}
-                      onChange={(e) => {
-                        field.onChange(e); // Necessário para manter o controle do React Hook Form
-                        setNome(e.target.value); // Continua com a lógica de setar o valor de Nome
-                      }}
-                    />
-                  )}
+                  disabled={isLoading}
+                  label='Nome completo'
                 />
               </Grid2>
             </Grid2>
-
-            <Grid2  container direction='row' spacing={2}>
+            <Grid2 container direction='row' spacing={2}>
               <Grid2
                 sx={{
                   width: {
-                    xs: '100%',  // 100% da largura em dispositivos pequenos
+                    xs: '100%', // 100% da largura em dispositivos pequenos
                     sm: '100%',
-                    md: '50%',   // 50% da largura em dispositivos médios
-                    lg: '33%',   // 33% da largura em dispositivos grandes
-                    xl: '25%'    // 25% da largura em dispositivos extra grandes
+                    md: '50%', // 50% da largura em dispositivos médios
+                    lg: '33%', // 33% da largura em dispositivos grandes
+                    xl: '25%', // 25% da largura em dispositivos extra grandes
                   },
-                  
                 }}
               >
-                <AutoCompleteRegiao />
+                {
+                  <AutoCompleteRegiao control={control}   isExternalLoading={isLoading} />
+                }
               </Grid2>
             </Grid2>
-
-            
           </Grid2>
         </Box>
-      </Box>
+      </FormProvider>{' '}
+      {/* Fechando FormProvider */}
     </LayoutBaseDePagina>
   );
 };
