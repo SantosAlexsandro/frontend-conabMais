@@ -34,12 +34,12 @@ const formValidationSchema = yup.object({
     .nullable()
     .min(1, 'Escolha uma característica válida do imóvel.')
     .required('Característica do Imóvel é obrigatória.'),
-  Categorias: yup.array().of(
+  /*Categorias: yup.array().of(
     yup.object({
       Operacao: yup.string().required('Operação é obrigatória.'),
       Codigo: yup.string().required('Código é obrigatório.'),
     })
-  ),
+  ),*/
 });
 
 // Tipo derivado do schema do Yup
@@ -52,7 +52,7 @@ export const EntitiesDetail: React.FC = () => {
     defaultValues: {
       Nome: '',
       CaracteristicaImovel: undefined, // Altere de null para undefined
-      Categorias: [],
+      // Categorias: [],
     },
   });
 
