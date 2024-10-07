@@ -6,81 +6,88 @@ import {
   LinearProgress,
   Paper,
   Typography,
-  Button
+  Button,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
-import { AutoCompleteRegiao } from './components/AutoCompleteRegiao';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { AutoCompleteRegiao } from '../../shared/forms/RAutoCompleteRegiao';
 import { RTextField } from '../../shared/forms/RTextField';
+import { RSelect } from '../../shared/forms';
 
-interface ICategoria {
-  Operacao: string;
-  Codigo: string;
-}
-
-interface IFormData {
-  Nome: string;
-  CodigoRegiao: string;
-}
-
-const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
+// Definir o schema Yup para o formulário
+const formValidationSchema = yup.object({
   Nome: yup
     .string()
     .required('Nome é obrigatório')
     .min(3, 'Mínimo de 3 caracteres'),
-  CodigoRegiao: yup.string().required('Código da região é obrigatório.')
+  CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
+  CaracteristicaImovel: yup
+    .number()
+    .nullable()
+    .min(1, 'Escolha uma característica válida do imóvel.')
+    .required('Característica do Imóvel é obrigatória.'),
+  Categorias: yup.array().of(
+    yup.object({
+      Operacao: yup.string().required('Operação é obrigatória.'),
+      Codigo: yup.string().required('Código é obrigatório.'),
+    })
+  ),
 });
+
+// Tipo derivado do schema do Yup
+type IFormData = yup.InferType<typeof formValidationSchema>;
 
 export const EntitiesDetail: React.FC = () => {
   const methods = useForm<IFormData>({
     resolver: yupResolver(formValidationSchema),
-    mode: 'onSubmit', // Valida apenas ao tentar enviar o formulário
+    mode: 'onSubmit',
     defaultValues: {
-      Nome: '', // Define o valor inicial de Nome como string vazia
-      // Outros campos podem ser adicionados aqui
+      Nome: '',
+      CaracteristicaImovel: undefined, // Altere de null para undefined
+      Categorias: [],
     },
   });
 
   const {
-    reset,
     control,
     handleSubmit,
     formState: { errors },
-    setError,
-    clearErrors,
   } = methods;
-
-  if (Object.keys(errors).length > 0) {
-    console.log('Erros de validação encontrados:', errors);
-  }
 
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState('');
+  const [categorias, setCategorias] = useState([{ Codigo: '' }]); // Inicia com uma categoria
 
   const onSubmit = (dados: IFormData) => {
-    console.log('INIT ON SUBMIT', dados);
     setIsLoading(true);
-    const saveData = { ...dados }; // Agora não precisa fazer validação manual, dados já validados
 
     if (id === 'nova') {
-      console.log('INIT CREATE', id);
-      PessoasService.create(saveData).then((result) => {
+      PessoasService.create(dados).then((result) => {
         setIsLoading(false);
         if (result instanceof Error) {
           console.log('erro', result.message);
-          // Aqui você pode, opcionalmente, setar um erro customizado no form
-          // setError('form', { type: 'manual', message: result.message });
         }
       });
     }
+  };
+
+  const handleAddCategoria = () => {
+    setCategorias([...categorias, { Codigo: '' }]);
+  };
+
+  const handleRemoveCategoria = (index: number) => {
+    const updatedCategorias = categorias.filter((_, i) => i !== index);
+    setCategorias(updatedCategorias);
   };
 
   return (
@@ -89,7 +96,7 @@ export const EntitiesDetail: React.FC = () => {
       barraDeFerramentas={
         <FerramentasDeDetalhe
           textoBotaoNovo='Nova'
-          mostrarBotaoSalvarEFechar
+          mostrarBotaoSalvarEFechar={false}
           mostrarBotaoNovo={id !== 'nova'}
           mostrarBotaoApagar={id !== 'nova'}
           aoClicarEmSalvar={handleSubmit(onSubmit)}
@@ -99,8 +106,6 @@ export const EntitiesDetail: React.FC = () => {
       }
     >
       <FormProvider {...methods}>
-        {' '}
-        {/* Agora todos os campos dentro de FormProvider terão acesso ao context */}
         <Box
           margin={1}
           display='flex'
@@ -121,11 +126,11 @@ export const EntitiesDetail: React.FC = () => {
               <Grid2
                 sx={{
                   width: {
-                    xs: '100%', // 100% da largura em dispositivos pequenos
+                    xs: '100%',
                     sm: '100%',
-                    md: '50%', // 50% da largura em dispositivos médios
-                    lg: '33%', // 33% da largura em dispositivos grandes
-                    xl: '25%', // 25% da largura em dispositivos extra grandes
+                    md: '50%',
+                    lg: '33%',
+                    xl: '25%',
                   },
                 }}
               >
@@ -141,23 +146,90 @@ export const EntitiesDetail: React.FC = () => {
               <Grid2
                 sx={{
                   width: {
-                    xs: '100%', // 100% da largura em dispositivos pequenos
+                    xs: '100%',
                     sm: '100%',
-                    md: '50%', // 50% da largura em dispositivos médios
-                    lg: '33%', // 33% da largura em dispositivos grandes
-                    xl: '25%', // 25% da largura em dispositivos extra grandes
+                    md: '50%',
+                    lg: '33%',
+                    xl: '25%',
                   },
                 }}
               >
-                {
-                  <AutoCompleteRegiao control={control}   isExternalLoading={isLoading} />
-                }
+                <AutoCompleteRegiao
+                  control={control}
+                  isExternalLoading={isLoading}
+                  name='CodigoRegiao'
+                  label='Região'
+                />
               </Grid2>
             </Grid2>
+
+            <Grid2 container direction='row' spacing={2}>
+              <Grid2
+                sx={{
+                  width: {
+                    xs: '100%',
+                    sm: '100%',
+                    md: '50%',
+                    lg: '33%',
+                    xl: '25%',
+                  },
+                }}
+              >
+                <RSelect
+                  name='CaracteristicaImovel'
+                  label='Característica do Imóvel'
+                  options={[
+                    { value: 1, label: 'Residencial' },
+                    { value: 2, label: 'Comercial' },
+                    { value: 3, label: 'Misto' },
+                  ]}
+                />
+              </Grid2>
+            </Grid2>
+
+            <Typography variant='h6'>Categorias</Typography>
+            {/* Aqui começa a seção de categorias */}
+            <Grid2 container direction='column' spacing={2}>
+              {categorias.map((categoria, index) => (
+                <Grid2 container key={index} spacing={2} alignItems='center'>
+                  {/* Campo Código */}
+                  <Grid2 >
+                    <RTextField
+                      fullWidth
+                      name={`Categorias[${index}].Codigo`}
+                      label='Código'
+                      value={categoria.Codigo}
+                      onChange={(e) => {
+                        const updatedCategorias = [...categorias];
+                        updatedCategorias[index].Codigo = e.target.value;
+                        setCategorias(updatedCategorias);
+                      }}
+                    />
+                  </Grid2>
+
+                  {/* Botão Remover */}
+                  <Grid2>
+                    <Button
+                      onClick={() => handleRemoveCategoria(index)}
+                    >
+                      Remover
+                    </Button>
+                  </Grid2>
+                </Grid2>
+              ))}
+
+              {/* Botão para adicionar nova categoria */}
+              <Grid2>
+                <Button color='primary' onClick={handleAddCategoria}>
+                  Adicionar Categoria
+                </Button>
+              </Grid2>
+            </Grid2>
+
+
           </Grid2>
         </Box>
-      </FormProvider>{' '}
-      {/* Fechando FormProvider */}
+      </FormProvider>
     </LayoutBaseDePagina>
   );
 };

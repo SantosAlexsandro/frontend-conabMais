@@ -85,7 +85,7 @@ export const EntitiesList: React.FC = () => {
           mostrarInputBusca
           textoDaBusca={busca}
           textoBotaoNovo='Nova'
-          aoClicarEmNovo={() => navigate('/entidades-prospects/detalhe/nova')}
+          aoClicarEmNovo={() => navigate('/entidades/detalhe/nova')}
           aoMudarTextoDeBusca={(texto) =>
             setSearchParams({ busca: texto, pagina: '1' }, { replace: true })
           }

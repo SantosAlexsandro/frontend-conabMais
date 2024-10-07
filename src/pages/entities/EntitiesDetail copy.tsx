@@ -219,19 +219,6 @@ export const EntitiesDetail: React.FC = () => {
                   <Grid item xs={4}>
                     <VTextField
                       fullWidth
-                      name={`Categorias[${index}].Operacao`}
-                      label='Operação'
-                      value={categoria.Operacao}
-                      onChange={(e) => {
-                        const updatedCategorias = [...categorias];
-                        updatedCategorias[index].Operacao = e.target.value;
-                        setCategorias(updatedCategorias);
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <VTextField
-                      fullWidth
                       name={`Categorias[${index}].Codigo`}
                       label='Código'
                       value={categoria.Codigo}
@@ -243,7 +230,6 @@ export const EntitiesDetail: React.FC = () => {
                     />
                   </Grid>
                   <Grid item>
-                    <Button onClick={() => handleRemoveCategoria(index)}>Remover</Button>
                   </Grid>
                 </Grid>
               ))}
@@ -251,6 +237,7 @@ export const EntitiesDetail: React.FC = () => {
                 <Button onClick={handleAddCategoria}>Adicionar Categoria</Button>
               </Grid>
             </Grid>
+            
             <Grid item>
             </Grid>
           </Grid>

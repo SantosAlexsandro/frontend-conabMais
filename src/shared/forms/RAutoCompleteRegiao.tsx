@@ -1,7 +1,7 @@
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { RegioesService } from '../../../shared/services/api/regiao/RegioesService';
-import { useDebounce } from '../../../shared/hooks';
+import { RegioesService } from '../services/api/regiao/RegioesService';
+import { useDebounce } from '../hooks';
 import { Controller } from 'react-hook-form';
 
 type TAutoCompleteOption = {
@@ -12,11 +12,15 @@ type TAutoCompleteOption = {
 interface IAutoCompleteRegiaoProps {
   isExternalLoading?: boolean;
   control: any; // O control vem do formulário principal
+  name: string;
+  label: string;
 }
 
 export const AutoCompleteRegiao: React.FC<IAutoCompleteRegiaoProps> = ({
   isExternalLoading = false,
   control,
+  name,
+  label
 }) => {
   const { debounce } = useDebounce();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
@@ -58,7 +62,7 @@ export const AutoCompleteRegiao: React.FC<IAutoCompleteRegiaoProps> = ({
 
   return (
     <Controller
-      name='CodigoRegiao'
+      name={name}
       control={control} // Receber o control do formulário pai
       defaultValue={undefined}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -96,7 +100,7 @@ export const AutoCompleteRegiao: React.FC<IAutoCompleteRegiaoProps> = ({
                   whiteSpace: 'nowrap', // Impede a quebra de linha
                 },
               }}
-              label='Região'
+              label={label}
               error={!!error}
               helperText={error ? error.message : null}
             />
@@ -106,12 +110,3 @@ export const AutoCompleteRegiao: React.FC<IAutoCompleteRegiaoProps> = ({
     />
   );
 };
-
-/*O problema aqui é que o AutoCompleteRegiao está criando seu próprio formulário ao utilizar useForm, o que não é necessário. 
-Em vez disso, ele precisa usar o control que é passado de EntitiesDetail, o formulário principal, 
-para que os dados fluam corretamente entre o componente AutoCompleteRegiao e o formulário pai.
-
-A ideia é que o AutoCompleteRegiao seja um campo controlado pelo react-hook-form que já foi inicializado no EntitiesDetail.
- Assim, o AutoCompleteRegiao não deve criar um novo formulário com useForm — ele deve receber o control e outros parâmetros 
- do useForm do formulário principal.
-*/

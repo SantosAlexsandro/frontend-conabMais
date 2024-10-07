@@ -22,7 +22,7 @@ export const AppRoutes = () => {
       },
       {
         icon: 'people',
-        path: '/entidades-prospects',
+        path: '/entidades',
         label: 'Entidades Prospects',
       },
       {
@@ -40,8 +40,8 @@ export const AppRoutes = () => {
       <Route path="/ocorrencias-externas" element={< TransactionsList />} />
       <Route path="/ocorrencias-externas/detalhe/:id" element={<TransactionsDetail />} />
 
-      <Route path="/entidades-prospects" element={<EntitiesList />} />
-      <Route path="/entidades-prospects/detalhe/:id" element={<EntitiesDetail />} />
+      <Route path="/entidades" element={<EntitiesList />} />
+      <Route path="/entidades/detalhe/:id" element={<EntitiesDetail />} />
 
       <Route path="*" element={<Navigate to="/pagina-inicial" />} />
     </Routes>
