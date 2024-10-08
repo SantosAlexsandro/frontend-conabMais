@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Grid2,
-  Grid,
   LinearProgress,
   Paper,
   Typography,
   Button,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import {
+  useForm,
+  FormProvider,
+  Controller,
+  useFieldArray,
+} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
@@ -26,7 +28,7 @@ import { RSelect } from '../../shared/forms';
 const formValidationSchema = yup.object({
   Nome: yup
     .string()
-    .required('Nome é obrigatório')
+    .required('Nome/Razão é obrigatório')
     .min(3, 'Mínimo de 3 caracteres'),
   CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
   CaracteristicaImovel: yup
@@ -34,12 +36,12 @@ const formValidationSchema = yup.object({
     .nullable()
     .min(1, 'Escolha uma característica válida do imóvel.')
     .required('Característica do Imóvel é obrigatória.'),
-  /*Categorias: yup.array().of(
+  Categorias: yup.array().of(
     yup.object({
       Operacao: yup.string().required('Operação é obrigatória.'),
-      Codigo: yup.string().required('Código é obrigatório.'),
+      Codigo: yup.string().required('Ao menos 1 categoria é obrigatória.'),
     })
-  ),*/
+  ),
 });
 
 // Tipo derivado do schema do Yup
@@ -51,29 +53,50 @@ export const EntitiesDetail: React.FC = () => {
     mode: 'onSubmit',
     defaultValues: {
       Nome: '',
-      CaracteristicaImovel: undefined, // Altere de null para undefined
-      // Categorias: [],
+      CaracteristicaImovel: undefined,
+      Categorias: [{ Codigo: '', Operacao: 'I' }], // Definir valor padrão para Categorias
     },
   });
 
-  const {
+  const { control, handleSubmit } = methods;
+
+  // useFieldArray para gerenciar dinamicamente os campos de Categorias
+  const { fields, append, remove } = useFieldArray({
     control,
-    handleSubmit,
-    formState: { errors },
-  } = methods;
+    name: 'Categorias',
+  });
 
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState('');
-  const [categorias, setCategorias] = useState([{ Codigo: '' }]); // Inicia com uma categoria
 
   const onSubmit = (dados: IFormData) => {
+    // Verifique se Categorias está definido
+    const categoriasComOperacao = dados.Categorias
+      ? dados.Categorias.map((categoria) => ({
+        ...categoria,
+        Operacao: 'I', // Define 'I' para cada categoria
+        Codigo: '03.01',
+      }))
+      : [];
+
+    const dadosComCategoriasAtualizadas = {
+      ...dados,
+      Categorias: categoriasComOperacao, // Sobrescreve as categorias
+    };
+
+    console.log(
+      'Dados que estão passando pela validação:',
+      dadosComCategoriasAtualizadas
+    );
     setIsLoading(true);
 
     if (id === 'nova') {
-      PessoasService.create(dados).then((result) => {
+      PessoasService.create(dadosComCategoriasAtualizadas).then((result) => {
         setIsLoading(false);
+        alert('Entidade Prospect cadastrada com sucesso.');
+        navigate('/entidades');
         if (result instanceof Error) {
           console.log('erro', result.message);
         }
@@ -82,12 +105,7 @@ export const EntitiesDetail: React.FC = () => {
   };
 
   const handleAddCategoria = () => {
-    setCategorias([...categorias, { Codigo: '' }]);
-  };
-
-  const handleRemoveCategoria = (index: number) => {
-    const updatedCategorias = categorias.filter((_, i) => i !== index);
-    setCategorias(updatedCategorias);
+    append({ Codigo: '', Operacao: 'I' }); // Adiciona nova categoria com Operacao predefinida
   };
 
   return (
@@ -162,7 +180,6 @@ export const EntitiesDetail: React.FC = () => {
                 />
               </Grid2>
             </Grid2>
-
             <Grid2 container direction='row' spacing={2}>
               <Grid2
                 sx={{
@@ -188,45 +205,44 @@ export const EntitiesDetail: React.FC = () => {
             </Grid2>
 
             <Typography variant='h6'>Categorias</Typography>
-            {/* Aqui começa a seção de categorias */}
-            <Grid2 container direction='column' spacing={2}>
-              {categorias.map((categoria, index) => (
-                <Grid2 container key={index} spacing={2} alignItems='center'>
+            <Grid2  direction='column' spacing={2}>
+              {fields.map((categoria, index) => (
+                <Grid2 container key={categoria.id} justifyContent='flex-start'>
                   {/* Campo Código */}
-                  <Grid2 >
-                    <RTextField
-                      fullWidth
+                  <Grid2
+                    sx={{
+                      width: {
+                        xs: '70%',
+                        sm: '70%',
+                        md: '50%',
+                        lg: '33%',
+                        xl: '25%',
+                      },
+                      paddingBottom: 2,
+                    }}
+                  >
+                    <AutoCompleteRegiao
+                      control={control}
+                      isExternalLoading={isLoading}
                       name={`Categorias[${index}].Codigo`}
-                      label='Código'
-                      value={categoria.Codigo}
-                      onChange={(e) => {
-                        const updatedCategorias = [...categorias];
-                        updatedCategorias[index].Codigo = e.target.value;
-                        setCategorias(updatedCategorias);
-                      }}
+                      label='Categoria da Entidade'
                     />
                   </Grid2>
 
                   {/* Botão Remover */}
                   <Grid2>
-                    <Button
-                      onClick={() => handleRemoveCategoria(index)}
-                    >
-                      Remover
-                    </Button>
+                    <Button onClick={() => remove(index)}>Remover</Button>
                   </Grid2>
                 </Grid2>
               ))}
 
               {/* Botão para adicionar nova categoria */}
-              <Grid2>
-                <Button color='primary' onClick={handleAddCategoria}>
+              <Grid2 sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Button onClick={handleAddCategoria}>
                   Adicionar Categoria
                 </Button>
               </Grid2>
             </Grid2>
-
-
           </Grid2>
         </Box>
       </FormProvider>

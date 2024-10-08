@@ -43,7 +43,7 @@ export const EntitiesList: React.FC = () => {
   }, [searchParams]);
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     setIsLoading(true);
 
     debounce(() => {
@@ -60,7 +60,7 @@ export const EntitiesList: React.FC = () => {
         }
       });
     });
-  }, [busca, pagina]);
+  }, [busca, pagina]);*/
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
@@ -104,7 +104,6 @@ export const EntitiesList: React.FC = () => {
               <TableCell>Tipo</TableCell>
               <TableCell>Nome/Razão</TableCell>
               <TableCell>Contato</TableCell>
-              <TableCell>Email</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -124,7 +123,6 @@ export const EntitiesList: React.FC = () => {
                 <TableCell>{'Empresa'}</TableCell>
                 <TableCell>Conab</TableCell>
                 <TableCell>11 123456789</TableCell>
-                <TableCell>conab@conab.com.br</TableCell>
                 {/*<TableCell>{'Empresa'}</TableCell>
                 <TableCell>{row.entity_first_name</TableCell>
                 <TableCell>{row.entity_phone}</TableCell>
