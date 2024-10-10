@@ -43,7 +43,6 @@ export const LayoutBaseDePagina: React.FC<ILayoutBaseDePaginaProps> = ({
             <Icon>menu</Icon>
           </IconButton>
         )}
-
         <Typography
           overflow='hidden'
           whiteSpace='nowrap'

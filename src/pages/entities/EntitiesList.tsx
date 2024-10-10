@@ -30,9 +30,24 @@ export const EntitiesList: React.FC = () => {
   const { debounce } = useDebounce();
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListagemPessoa[]>([]);
+  // const [rows, setRows] = useState<IListagemPessoa[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(2);
+  // Exemplo de array
+  const [dados, setDados] = useState([
+    {
+      id: 1,
+      tipo: 'Empresa',
+      nome: 'Conab',
+      contato: '11912345678',
+    },
+    {
+      id: 2,
+      tipo: 'Pessoa',
+      nome: 'Marcelo',
+      contato: '11987654321',
+    },
+  ]);
 
   const busca = useMemo(() => {
     return searchParams.get('busca') || '';
@@ -68,9 +83,9 @@ export const EntitiesList: React.FC = () => {
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          setRows((oldRows) => [
+          /* setRows((oldRows) => [
             ...oldRows.filter((oldRow) => oldRow.id !== id),
-          ]);
+          ]);*/
           alert('Registro apagado com sucesso!');
         }
       });
@@ -107,7 +122,7 @@ export const EntitiesList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {dados.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
                   <IconButton size='small' onClick={() => handleDelete(row.id)}>
@@ -120,8 +135,8 @@ export const EntitiesList: React.FC = () => {
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{'Empresa'}</TableCell>
-                <TableCell>Conab</TableCell>
+                <TableCell>{row.tipo}</TableCell>
+                <TableCell>{row.nome}</TableCell>
                 <TableCell>11 123456789</TableCell>
                 {/*<TableCell>{'Empresa'}</TableCell>
                 <TableCell>{row.entity_first_name</TableCell>
@@ -143,6 +158,7 @@ export const EntitiesList: React.FC = () => {
                 </TableCell>
               </TableRow>
             )}
+           
             {totalCount > 0 && totalCount > Environment.LIMITE_DE_LINHAS && (
               <TableRow>
                 <TableCell colSpan={3}>
@@ -159,6 +175,7 @@ export const EntitiesList: React.FC = () => {
                 </TableCell>
               </TableRow>
             )}
+
           </TableFooter>
         </Table>
       </TableContainer>

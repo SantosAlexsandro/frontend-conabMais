@@ -3,9 +3,7 @@ import { Api } from '../axios-config';
 
 export interface IListagemPessoa {
   id: number;
-  entity_first_name: string;
-  entity_email: string;
-  entity_phone: string;
+  tipo: string;
 }
 
 interface ICategoria {

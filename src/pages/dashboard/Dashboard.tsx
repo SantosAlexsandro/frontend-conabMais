@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, Grid, Icon, ListItemIcon, Typography } from '@mui/material';
 
 // import { CidadesService } from '../../shared/services/api/cidades/CidadesService';
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
@@ -8,14 +8,14 @@ import { LayoutBaseDePagina } from '../../shared/layouts';
 
 
 export const Dashboard = () => {
-  const [isLoadingCidades, setIsLoadingCidades] = useState(true);
-  const [isLoadingPessoas, setIsLoadingPessoas] = useState(true);
+  const [isLoadingCidades, setIsLoadingCidades] = useState(false);
+  const [isLoadingPessoas, setIsLoadingPessoas] = useState(false);
   const [totalCountCidades, setTotalCountCidades] = useState(0);
-  const [totalCountPessoas, setTotalCountPessoas] = useState(0);
+  const [totalCountPessoas, setTotalCountPessoas] = useState(2);
 
   useEffect(() => {
-    setIsLoadingCidades(true);
-    setIsLoadingPessoas(true);
+    setIsLoadingCidades(false);
+    setIsLoadingPessoas(false);
 
     /*CidadesService.getAll(1)
       .then((result) => {
@@ -36,7 +36,7 @@ export const Dashboard = () => {
           // alert(result.message);
           console.log(result.message);
         } else {
-          setTotalCountPessoas(result.totalCount);
+          // setTotalCountPessoas(result.totalCount);
         }
       });
   }, []);
@@ -44,7 +44,7 @@ export const Dashboard = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo='Página inicial'
+      titulo='Página Inicial'
       barraDeFerramentas={<FerramentasDaListagem mostrarBotaoNovo={false} />}
     >
       <Box width='100%' display='flex'>
@@ -60,16 +60,16 @@ export const Dashboard = () => {
                   </Typography>
 
                   <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
-                    {!isLoadingPessoas && (
+                    {
                       <Typography variant='h1'>
                         {totalCountPessoas}
                       </Typography>
-                    )}
-                    {isLoadingPessoas && (
+                    }
+                    { /*{isLoadingPessoas && (
                       <Typography variant='h6'>
                         Carregando...
                       </Typography>
-                    )}
+                    )}*/}
                   </Box>
                 </CardContent>
               </Card>
