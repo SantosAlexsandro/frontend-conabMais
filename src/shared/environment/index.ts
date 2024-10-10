@@ -15,5 +15,5 @@ export const Environment = {
   /**
    * Url base de consultado dos dados dessa aplicação
    */
-  URL_BASE: 'https://erpteste.conab.com.br:7211/',
+  URL_BASE: 'https://erpteste.conab.com.br/',
 };
