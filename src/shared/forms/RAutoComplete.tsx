@@ -1,8 +1,9 @@
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { RegioesService } from '../services/api/regiao/RegioesService';
+import { CategoriasService } from '../services/api/categoria/CategoriasService';
 import { useDebounce } from '../hooks';
-import { Controller } from 'react-hook-form';
+import { Controller, Control } from 'react-hook-form';
 
 type TAutoCompleteOption = {
   id: string;
@@ -11,16 +12,18 @@ type TAutoCompleteOption = {
 
 interface IAutoCompleteRegiaoProps {
   isExternalLoading?: boolean;
-  control: any; // O control vem do formulário principal
+  control: Control<any>; // Tipagem mais precisa do react-hook-form
   name: string;
   label: string;
+  source: 'regioes' | 'categorias';
 }
 
 export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
   isExternalLoading = false,
   control,
   name,
-  label
+  label,
+  source,
 }) => {
   const { debounce } = useDebounce();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
@@ -29,27 +32,36 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
   const [busca, setBusca] = useState('');
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchData = async () => {
+      setIsLoading(true);
 
-    debounce(() => {
-      RegioesService.getAll(1, busca).then((result) => {
-        setIsLoading(false);
+      const fieldService =
+        source === 'regioes' ? RegioesService : CategoriasService;
+
+      try {
+        const result = await fieldService.getAll(1, busca);
 
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          console.log(result);
-
           setOptions(
-            result.data.map((regiao) => ({
-              id: regiao.Codigo,
-              label: regiao.Codigo + ' - ' + regiao.Nome,
+            result.data.map((item: any) => ({
+              id: item.Codigo,
+              label: item.Codigo + ' - ' + item.Nome,
             }))
           );
         }
-      });
-    });
-  }, [busca]);
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    debounce(fetchData);
+    // Função de limpeza para interromper requisições em andamento
+
+    return () => setIsLoading(false);
+  }, [busca, source, debounce]);
 
   const autoCompleteSelectedOption = useMemo(() => {
     if (!selectedId) return null;
@@ -72,7 +84,7 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
           noOptionsText='Sem opções'
           loadingText='Carregando...'
           value={autoCompleteSelectedOption} // O valor controlado pelo estado interno
-          loading={isLoading}
+          loading={isLoading || isExternalLoading}
           disabled={isExternalLoading}
           onInputChange={(_, newValue) => setBusca(newValue)}
           popupIcon={
@@ -87,6 +99,7 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
           disablePortal
           options={options}
           fullWidth
+          sx={{ width: '100%' }}
           renderInput={(params) => (
             <TextField
               {...params}

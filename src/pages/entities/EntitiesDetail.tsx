@@ -20,7 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
-import { AutoCompleteRegiao } from '../../shared/forms/RAutoCompleteRegiao';
+import { AutoComplete } from '../../shared/forms/RAutoComplete';
 import { RTextField } from '../../shared/forms/RTextField';
 import { RSelect } from '../../shared/forms';
 
@@ -77,7 +77,7 @@ export const EntitiesDetail: React.FC = () => {
       ? dados.Categorias.map((categoria) => ({
         ...categoria,
         Operacao: 'I', // Define 'I' para cada categoria
-        Codigo: '03.01',
+        // Codigo: '03.01',
       }))
       : [];
 
@@ -172,11 +172,12 @@ export const EntitiesDetail: React.FC = () => {
                   },
                 }}
               >
-                <AutoCompleteRegiao
+                <AutoComplete
                   control={control}
                   isExternalLoading={isLoading}
                   name='CodigoRegiao'
                   label='Região'
+                  source='regioes'
                 />
               </Grid2>
             </Grid2>
@@ -221,11 +222,12 @@ export const EntitiesDetail: React.FC = () => {
                       paddingBottom: 2,
                     }}
                   >
-                    <AutoCompleteRegiao
+                    <AutoComplete
                       control={control}
                       isExternalLoading={isLoading}
                       name={`Categorias[${index}].Codigo`}
                       label='Categoria da Entidade'
+                      source = 'categorias'
                     />
                   </Grid2>
 
