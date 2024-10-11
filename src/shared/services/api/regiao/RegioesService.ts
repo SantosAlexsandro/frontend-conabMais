@@ -23,7 +23,8 @@ const getAll = async (
 ): Promise<TCidadesComTotalCount | Error> => {
   try {
     const urlRelativa =
-      `/api/Regiao/RetrievePage?filter&order=&pageSize=${Environment.LIMITE_DE_LINHAS}&pageIndex=1`;
+    'api/regioes?filter&page';
+    // `/api/Regiao/RetrievePage?filter&order=&pageSize=${Environment.LIMITE_DE_LINHAS}&pageIndex=1`;
     //const urlRelativa = `/cidades?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nome_like=${filter}&id_like=${id}`;
     const { data, headers } = await Api.get(urlRelativa);
     if (data) {
