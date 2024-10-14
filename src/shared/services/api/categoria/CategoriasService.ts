@@ -34,7 +34,7 @@ const getAll = async (
 
     return new Error('Erro ao listar os registros.');
   } catch (error) {
-    console.error('ERROR OBTER REGIOES', error);
+    console.error('ERROR OBTER CATEGORIAS', error);
     return new Error(
       (error as { message: string }).message || 'Erro ao listar os registros.'
     );

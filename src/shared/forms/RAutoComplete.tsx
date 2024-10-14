@@ -40,7 +40,7 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
 
       try {
         const result = await fieldService.getAll(1, busca);
-
+        console.log('result', result);
         if (result instanceof Error) {
           alert(result.message);
         } else {
