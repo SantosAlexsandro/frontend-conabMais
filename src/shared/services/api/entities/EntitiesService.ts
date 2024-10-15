@@ -70,7 +70,7 @@ const create = async (
 ): Promise<number | Error> => {
   try {
     const { data } = await Api.post<IDetalheEntidade>(
-      '/api/Entidade/InserirAlterarEntidade',
+      '/entities',
       dados
     );
 
