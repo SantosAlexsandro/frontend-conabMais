@@ -85,7 +85,7 @@ export const TransactionsList: React.FC = () => {
         <FerramentasDaListagem
           mostrarInputBusca
           textoDaBusca={busca}
-          textoBotaoNovo='Novo'
+          textoBotaoNovo='Nova'
           aoClicarEmNovo={() => navigate('/ocorrencias-externas/detalhe/nova')}
           aoMudarTextoDeBusca={(texto) =>
             setSearchParams({ busca: texto, pagina: '1' }, { replace: true })

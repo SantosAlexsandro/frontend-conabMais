@@ -33,7 +33,7 @@ export const AppRoutes = () => {
         label: 'Ocorrências Externas',
       },
       {
-        icon: 'list_alt',
+        icon: 'build',
         path: '/ordens-de-servico',
         label: 'Ordens de Serviço',
       },
