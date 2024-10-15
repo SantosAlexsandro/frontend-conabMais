@@ -7,7 +7,9 @@ import {
   EntitiesDetail,
   EntitiesList,
   TransactionsList,
-  TransactionsDetail
+  TransactionsDetail,
+  WorkOrdersList,
+  WorkOrdersDetail
 } from '../pages';
 
 export const AppRoutes = () => {
@@ -26,24 +28,35 @@ export const AppRoutes = () => {
         label: 'Entidades Prospects',
       },
       {
-        icon: 'build',
+        icon: 'assignment',
         path: '/ocorrencias-externas',
         label: 'Ocorrências Externas',
-      }
+      },
+      {
+        icon: 'list_alt',
+        path: '/ordens-de-servico',
+        label: 'Ordens de Serviço',
+      },
     ]);
   }, []);
 
   return (
     <Routes>
-      <Route path="/pagina-inicial" element={<Dashboard />} />
+      <Route path='/pagina-inicial' element={<Dashboard />} />
 
-      <Route path="/ocorrencias-externas" element={< TransactionsList />} />
-      <Route path="/ocorrencias-externas/detalhe/:id" element={<TransactionsDetail />} />
+      <Route path='/ocorrencias-externas' element={<TransactionsList />} />
+      <Route
+        path='/ocorrencias-externas/detalhe/:id'
+        element={<TransactionsDetail />}
+      />
 
-      <Route path="/entidades" element={<EntitiesList />} />
-      <Route path="/entidades/detalhe/:id" element={<EntitiesDetail />} />
+      <Route path='/entidades' element={<EntitiesList />} />
+      <Route path='/entidades/detalhe/:id' element={<EntitiesDetail />} />
 
-      <Route path="*" element={<Navigate to="/pagina-inicial" />} />
+      <Route path='/ordens-de-servico' element={<WorkOrdersList />} />
+      <Route path='/entidades/detalhe/:id' element={<WorkOrdersDetail />} />
+
+      <Route path='*' element={<Navigate to='/pagina-inicial' />} />
     </Routes>
   );
 };
