@@ -100,6 +100,31 @@ export const Dashboard = () => {
 
             </Grid>
 
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+
+              <Card>
+                <CardContent>
+                  <Typography variant='h5' align='center'>
+                    Ordens de Serviço
+                  </Typography>
+
+                  <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
+                    {!isLoadingCidades && (
+                      <Typography variant='h1'>
+                        {totalCountCidades}
+                      </Typography>
+                    )}
+                    {isLoadingCidades && (
+                      <Typography variant='h1'>
+                        {totalCountCidades}
+                      </Typography>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
+
+            </Grid>
+
           </Grid>
         </Grid>
       </Box>

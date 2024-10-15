@@ -54,7 +54,7 @@ export const AppRoutes = () => {
       <Route path='/entidades/detalhe/:id' element={<EntitiesDetail />} />
 
       <Route path='/ordens-de-servico' element={<WorkOrdersList />} />
-      <Route path='/entidades/detalhe/:id' element={<WorkOrdersDetail />} />
+      <Route path='/ordens-de-servico/detalhe/:id' element={<WorkOrdersDetail />} />
 
       <Route path='*' element={<Navigate to='/pagina-inicial' />} />
     </Routes>

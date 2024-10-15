@@ -17,9 +17,10 @@ import {
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
+
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
+import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { AutoComplete } from '../../shared/forms/RAutoComplete';
 import { RTextField } from '../../shared/forms/RTextField';
 import { RSelect } from '../../shared/forms';
