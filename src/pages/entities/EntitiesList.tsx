@@ -30,7 +30,7 @@ export const EntitiesList: React.FC = () => {
   const { debounce } = useDebounce();
   const navigate = useNavigate();
 
-  // const [rows, setRows] = useState<IListagemPessoa[]>([]);
+  const [rows, setRows] = useState<IListagemPessoa[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(2);
   // Exemplo de array
@@ -58,7 +58,7 @@ export const EntitiesList: React.FC = () => {
   }, [searchParams]);
 
 
-  /*useEffect(() => {
+  useEffect(() => {
     setIsLoading(true);
 
     debounce(() => {
@@ -75,8 +75,9 @@ export const EntitiesList: React.FC = () => {
         }
       });
     });
-  }, [busca, pagina]);*/
+  }, [busca, pagina]);
 
+  /*
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
       PessoasService.deleteById(id).then((result) => {
@@ -85,12 +86,17 @@ export const EntitiesList: React.FC = () => {
         } else {
           /* setRows((oldRows) => [
             ...oldRows.filter((oldRow) => oldRow.id !== id),
-          ]);*/
+          ]);
           alert('Registro apagado com sucesso!');
         }
       });
     }
+  };*/
+
+  const handleDelete = (id: number) => {
+    //
   };
+
 
   return (
     <LayoutBaseDePagina
@@ -116,13 +122,13 @@ export const EntitiesList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell width={100}>Ações</TableCell>
-              <TableCell>Tipo</TableCell>
+              <TableCell>Código</TableCell>
               <TableCell>Nome/Razão</TableCell>
               <TableCell>Contato</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {dados.map((row) => (
+            {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
                   <IconButton size='small' onClick={() => handleDelete(row.id)}>
@@ -135,9 +141,9 @@ export const EntitiesList: React.FC = () => {
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{row.tipo}</TableCell>
-                <TableCell>{row.nome}</TableCell>
-                <TableCell>11 123456789</TableCell>
+                <TableCell>{row.Codigo}</TableCell>
+                <TableCell>{row.Nome}</TableCell>
+                <TableCell>{'11 123456789'}</TableCell>
                 {/*<TableCell>{'Empresa'}</TableCell>
                 <TableCell>{row.entity_first_name</TableCell>
                 <TableCell>{row.entity_phone}</TableCell>
@@ -153,7 +159,7 @@ export const EntitiesList: React.FC = () => {
           <TableFooter>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={3}>
+                <TableCell colSpan={4}>
                   <LinearProgress variant='indeterminate' />
                 </TableCell>
               </TableRow>

@@ -3,7 +3,8 @@ import { Api } from '../axios-config';
 
 export interface IListagemPessoa {
   id: number;
-  tipo: string;
+  Codigo: string;
+  Nome: string;
 }
 
 interface ICategoria {
@@ -27,7 +28,8 @@ const getAll = async (
   filter = ''
 ): Promise<TPessoasComTotalCount | Error> => {
   try {
-    const urlRelativa = `/entidades?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nomeCompleto_like=${filter}`;
+    // const urlRelativa = `/entidades?_page=${page}&_limit=${Environment.LIMITE_DE_LINHAS}&nomeCompleto_like=${filter}`;
+    const urlRelativa = '/entities';
     const { data, headers } = await Api.get(urlRelativa);
 
     if (data) {
@@ -48,6 +50,7 @@ const getAll = async (
   }
 };
 
+/*
 const getById = async (id: number): Promise<IDetalheEntidade | Error> => {
   try {
     const { data } = await Api.get(`/pessoas/${id}`);
@@ -63,7 +66,7 @@ const getById = async (id: number): Promise<IDetalheEntidade | Error> => {
       (error as { message: string }).message || 'Erro ao consultar o registro.'
     );
   }
-};
+};*/
 
 const create = async (
   dados: Omit<IDetalheEntidade, 'id'>
@@ -87,6 +90,7 @@ const create = async (
   }
 };
 
+/*
 const updateById = async (
   id: number,
   dados: IDetalheEntidade
@@ -101,6 +105,7 @@ const updateById = async (
   }
 };
 
+
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
     await Api.delete(`/pessoas/${id}`);
@@ -110,12 +115,12 @@ const deleteById = async (id: number): Promise<void | Error> => {
       (error as { message: string }).message || 'Erro ao apagar o registro.'
     );
   }
-};
+};*/
 
 export const PessoasService = {
   getAll,
   create,
-  getById,
-  updateById,
-  deleteById,
+  //getById,
+  //updateById,
+  //deleteById,
 };
