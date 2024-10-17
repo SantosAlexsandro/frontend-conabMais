@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { RegioesService } from '../services/api/regiao/RegioesService';
 import { CategoriasService } from '../services/api/categoria/CategoriasService';
 import { EntitiesService } from '../services/api/entities/EntitiesService';
+import { TypeServOrdService } from '../services/api/typeServOrdService/TypeServOrdService';
+import { ProductService } from '../services/api/productService/ProductService';
+
 import { useDebounce } from '../hooks';
 import { Controller, Control } from 'react-hook-form';
 
@@ -10,7 +13,9 @@ import { Controller, Control } from 'react-hook-form';
 const serviceMap: Record<string, any> = {
   RegioesService,
   CategoriasService,
-  EntitiesService  // Adicione outros serviços conforme necessário
+  EntitiesService,
+  TypeServOrdService,  // Adicione outros serviços conforme necessário
+  ProductService
 };
 
 
@@ -24,7 +29,7 @@ interface IAutoCompleteRegiaoProps {
   control: Control<any>; // Tipagem mais precisa do react-hook-form
   name: string;
   label: string;
-  source: 'RegioesService' | 'CategoriasService' | 'EntitiesService';
+  source: 'RegioesService' | 'CategoriasService' | 'EntitiesService' | 'TypeServOrdService' | 'ProductService'; // Adicione outras fontes conforme necessário
 }
 
 export const RAutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({

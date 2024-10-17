@@ -105,10 +105,6 @@ export const WorkOrdersDetail: React.FC = () => {
     }
   };
 
-  const handleAddCategoria = () => {
-    append({ Codigo: '', Operacao: 'I' }); // Adiciona nova categoria com Operacao predefinida
-  };
-
   return (
     <LayoutBaseDePagina
       titulo={id === 'nova' ? 'Nova Ordem de Serviço' : nome}
@@ -148,7 +144,7 @@ export const WorkOrdersDetail: React.FC = () => {
                 <RAutoComplete
                   control={control}
                   isExternalLoading={isLoading}
-                  name='CodigoRegiao'
+                  name='CodigoEntidade'
                   label='Entidade'
                   source='EntitiesService'
                 />
@@ -161,9 +157,22 @@ export const WorkOrdersDetail: React.FC = () => {
                 <RAutoComplete
                   control={control}
                   isExternalLoading={isLoading}
-                  name='CodigoRegiao'
+                  name='CodigoTipoOrdServ'
                   label='Tipo Ordem de Serviço'
-                  source='RegioesService'
+                  source='TypeServOrdService'
+                />
+              </ReusableGrid>
+            </Grid2>
+
+            {/* Tipo de atendimento */}
+            <Grid2 container direction='row' spacing={2}>
+              <ReusableGrid>
+                <RAutoComplete
+                  control={control}
+                  isExternalLoading={isLoading}
+                  name='CodigoTipoAtendContrato'
+                  label='Tipo de Atendimento'
+                  source='TypeServOrdService'
                 />
               </ReusableGrid>
             </Grid2>
@@ -178,9 +187,9 @@ export const WorkOrdersDetail: React.FC = () => {
                 <RAutoComplete
                   control={control}
                   isExternalLoading={isLoading}
-                  name='CodigoRegiao'
+                  name='CodigoProduto'
                   label='Produto'
-                  source='RegioesService'
+                  source='ProductService'
                 />
               </ReusableGrid>
             </Grid2>
