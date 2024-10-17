@@ -5,44 +5,28 @@ import {
   Grid2,
   LinearProgress,
   Paper,
-  Typography,
-  Button,
+  Typography
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 import {
   useForm,
   FormProvider,
-  Controller,
-  useFieldArray,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
-import { EntitiesService} from '../../shared/services/api/entities/EntitiesService';
 import { RAutoComplete } from '../../shared/forms/RAutoComplete';
 import { WorkOrdersService } from '../../shared/services/api/workOrders/WorkOrdersService';
 
 
 // Definir o schema Yup para o formulário
 const formValidationSchema = yup.object({
-  Nome: yup
-    .string()
-    .required('Nome/Razão é obrigatório')
-    .min(3, 'Mínimo de 3 caracteres'),
-  CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
-  CaracteristicaImovel: yup
-    .number()
-    .nullable()
-    .min(1, 'Escolha uma característica válida do imóvel.')
-    .required('Característica do Imóvel é obrigatória.'),
-  Categorias: yup.array().of(
-    yup.object({
-      Operacao: yup.string().required('Operação é obrigatória.'),
-      Codigo: yup.string().required('Ao menos 1 categoria é obrigatória.'),
-    })
-  ),
+  CodigoEntidade: yup.string().required('Entidade é obrigatório.'),
+  CodigoTipoOrdServ: yup.string().required('Tipo da Ordem de Serviço é obrigatório.'),
+  CodigoTipoAtendContrato: yup.string().required('Tipo de atendimento é obrigatório.'),
+  CodigoProduto: yup.string().required('Produto é obrigatório.'),
 });
 
 // Tipo derivado do schema do Yup
@@ -53,51 +37,23 @@ export const WorkOrdersDetail: React.FC = () => {
     resolver: yupResolver(formValidationSchema),
     mode: 'onSubmit',
     defaultValues: {
-      Nome: '',
-      CaracteristicaImovel: undefined,
-      Categorias: [{ Codigo: '', Operacao: 'I' }], // Definir valor padrão para Categorias
+      CodigoEntidade: '',
     },
   });
 
   const { control, handleSubmit } = methods;
 
-  // useFieldArray para gerenciar dinamicamente os campos de Categorias
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'Categorias',
-  });
-
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [nome, setNome] = useState('');
 
   const onSubmit = (dados: IFormData) => {
-    // Verifique se Categorias está definido
-    const categoriasComOperacao = dados.Categorias
-      ? dados.Categorias.map((categoria) => ({
-        ...categoria,
-        Operacao: 'I', // Define 'I' para cada categoria
-        // Codigo: '03.01',
-      }))
-      : [];
-
-    const dadosComCategoriasAtualizadas = {
-      ...dados,
-      Categorias: categoriasComOperacao, // Sobrescreve as categorias
-    };
-
-    console.log(
-      'Dados que estão passando pela validação:',
-      dadosComCategoriasAtualizadas
-    );
     setIsLoading(true);
-
     if (id === 'nova') {
-      EntitiesService.create(dadosComCategoriasAtualizadas).then((result) => {
+      WorkOrdersService.create(dados).then((result) => {
         setIsLoading(false);
         alert('Ordem de Serviço cadastrada com sucesso.');
-        navigate('/entidades');
+        navigate('/ordens-de-servico');
         if (result instanceof Error) {
           console.log('erro', result.message);
         }
@@ -107,7 +63,7 @@ export const WorkOrdersDetail: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Nova Ordem de Serviço' : nome}
+      titulo={id === 'nova' ? 'Nova Ordem de Serviço' : ''}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           textoBotaoNovo='Nova'
