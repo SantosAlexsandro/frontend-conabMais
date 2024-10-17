@@ -172,7 +172,7 @@ export const WorkOrdersDetail: React.FC = () => {
                   isExternalLoading={isLoading}
                   name='CodigoTipoAtendContrato'
                   label='Tipo de Atendimento'
-                  source='TypeServOrdService'
+                  source='TypeAssistancesService'
                 />
               </ReusableGrid>
             </Grid2>

@@ -4,6 +4,7 @@ import { RegioesService } from '../services/api/regiao/RegioesService';
 import { CategoriasService } from '../services/api/categoria/CategoriasService';
 import { EntitiesService } from '../services/api/entities/EntitiesService';
 import { TypeServOrdService } from '../services/api/typeServOrdService/TypeServOrdService';
+import { TypeAssistancesService } from '../services/api/typeAssistancesService/TypeAssistancesService';
 import { ProductService } from '../services/api/productService/ProductService';
 
 import { useDebounce } from '../hooks';
@@ -15,7 +16,8 @@ const serviceMap: Record<string, any> = {
   CategoriasService,
   EntitiesService,
   TypeServOrdService,  // Adicione outros serviços conforme necessário
-  ProductService
+  ProductService,
+  TypeAssistancesService
 };
 
 
@@ -29,7 +31,7 @@ interface IAutoCompleteRegiaoProps {
   control: Control<any>; // Tipagem mais precisa do react-hook-form
   name: string;
   label: string;
-  source: 'RegioesService' | 'CategoriasService' | 'EntitiesService' | 'TypeServOrdService' | 'ProductService'; // Adicione outras fontes conforme necessário
+  source: 'RegioesService' | 'CategoriasService' | 'EntitiesService' | 'TypeServOrdService' | 'ProductService' | 'TypeAssistancesService'; // Adicione outras fontes conforme necessário
 }
 
 export const RAutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
