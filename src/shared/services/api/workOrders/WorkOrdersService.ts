@@ -1,16 +1,13 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
 
-export interface IListagemPessoa {
+export interface IListagemOS {
   id: number;
   Codigo: string;
   Nome: string;
+  CodigoEntidade: string;
 }
 
-interface ICategoria {
-  Operacao: string;
-  Codigo: string;
-}
 
 export interface IDetalheEntidade {
   id: number;
@@ -21,7 +18,7 @@ export interface IDetalheEntidade {
 }
 
 type TPessoasComTotalCount = {
-  data: IListagemPessoa[];
+  data: IListagemOS[];
   totalCount: number;
 };
 

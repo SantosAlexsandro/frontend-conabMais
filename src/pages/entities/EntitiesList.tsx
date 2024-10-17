@@ -33,21 +33,6 @@ export const EntitiesList: React.FC = () => {
   const [rows, setRows] = useState<IListagemPessoa[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(2);
-  // Exemplo de array
-  const [dados, setDados] = useState([
-    {
-      id: 1,
-      tipo: 'Empresa',
-      nome: 'Conab',
-      contato: '11912345678',
-    },
-    {
-      id: 2,
-      tipo: 'Pessoa',
-      nome: 'Marcelo',
-      contato: '11987654321',
-    },
-  ]);
 
   const busca = useMemo(() => {
     return searchParams.get('busca') || '';

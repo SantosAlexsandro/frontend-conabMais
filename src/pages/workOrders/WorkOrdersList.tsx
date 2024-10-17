@@ -17,9 +17,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 
 import {
-  ITransactionList,
-  TransactionsService,
-} from '../../shared/services/api/transactions/TransactionsService';
+  IListagemOS,
+  WorkOrdersService,
+} from '../../shared/services/api/workOrders/WorkOrdersService';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { FerramentasDaListagem } from '../../shared/components';
 import { useDebounce } from '../../shared/hooks';
@@ -30,7 +30,7 @@ export const WorkOrdersList = () => {
   const { debounce } = useDebounce();
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<ITransactionList[]>([]);
+  const [rows, setRows] = useState<IListagemOS[]>([]);
   console.log(rows);
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -44,21 +44,29 @@ export const WorkOrdersList = () => {
   }, [searchParams]);
 
 
-  const handleDelete = (id: number) => {
-    if (confirm('Realmente deseja apagar?')) {
-      TransactionsService.deleteById(id).then((result) => {
+  useEffect(() => {
+    setIsLoading(true);
+
+    debounce(() => {
+      WorkOrdersService.getAll(pagina, busca).then((result) => {
+        setIsLoading(false);
+
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          setRows((oldRows) => [
-            ...oldRows.filter((oldRow) => oldRow.id !== id),
-          ]);
-          alert('Registro apagado com sucesso!');
+          console.log(result);
+
+          setTotalCount(result.totalCount);
+          setRows(result.data);
         }
       });
-    }
-  };
+    });
+  }, [busca, pagina]);
 
+
+  const handleDelete = (id: number) => {
+    //
+  };
 
 
   return (
@@ -85,11 +93,10 @@ export const WorkOrdersList = () => {
           <TableHead>
             <TableRow>
               <TableCell width={100}>Ações</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Nº</TableCell>
-              <TableCell>Data</TableCell>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Número</TableCell>
+              <TableCell>Entidade</TableCell>
+              <TableCell>Tipo OS</TableCell>
+              <TableCell>Produto</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,13 +113,7 @@ export const WorkOrdersList = () => {
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{'Pré-orçamento'}</TableCell>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>
-                  {moment(row.transaction_date).format('DD/MM/YYYY')}
-                </TableCell>
-                <TableCell>{rows[0]?.Entity?.entity_first_name}</TableCell>
-                <TableCell>{row.transaction_status}</TableCell>
+                <TableCell>{row.Codigo}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -124,7 +125,7 @@ export const WorkOrdersList = () => {
           <TableFooter>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={3}>
+                <TableCell colSpan={5}>
                   <LinearProgress variant='indeterminate' />
                 </TableCell>
               </TableRow>
