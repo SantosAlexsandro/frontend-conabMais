@@ -57,7 +57,7 @@ export const WorkOrdersList = () => {
           console.log(result);
 
           setTotalCount(result.totalCount);
-          setRows(result.data);
+          // setRows(result.data);
         }
       });
     });
