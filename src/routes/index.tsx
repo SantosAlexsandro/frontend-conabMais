@@ -28,14 +28,14 @@ export const AppRoutes = () => {
         label: 'Entidades Prospects',
       },
       {
-        icon: 'assignment',
-        path: '/ocorrencias-externas',
-        label: 'Ocorrências Externas',
-      },
-      {
         icon: 'build',
         path: '/ordens-de-servico',
         label: 'Ordens de Serviço',
+      },
+      {
+        icon: 'assignment',
+        path: '/ocorrencias',
+        label: 'Ocorrências Externas',
       },
     ]);
   }, []);
@@ -44,9 +44,9 @@ export const AppRoutes = () => {
     <Routes>
       <Route path='/pagina-inicial' element={<Dashboard />} />
 
-      <Route path='/ocorrencias-externas' element={<TransactionsList />} />
+      <Route path='/ocorrencias' element={<TransactionsList />} />
       <Route
-        path='/ocorrencias-externas/detalhe/:id'
+        path='/ocorrencias/detalhe/:id'
         element={<TransactionsDetail />}
       />
 

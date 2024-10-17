@@ -2,8 +2,17 @@ import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { RegioesService } from '../services/api/regiao/RegioesService';
 import { CategoriasService } from '../services/api/categoria/CategoriasService';
+import { EntitiesService } from '../services/api/entities/EntitiesService';
 import { useDebounce } from '../hooks';
 import { Controller, Control } from 'react-hook-form';
+
+// Mapa de serviços
+const serviceMap: Record<string, any> = {
+  RegioesService,
+  CategoriasService,
+  EntitiesService  // Adicione outros serviços conforme necessário
+};
+
 
 type TAutoCompleteOption = {
   id: string;
@@ -15,10 +24,10 @@ interface IAutoCompleteRegiaoProps {
   control: Control<any>; // Tipagem mais precisa do react-hook-form
   name: string;
   label: string;
-  source: 'regioes' | 'categorias';
+  source: 'RegioesService' | 'CategoriasService' | 'EntitiesService';
 }
 
-export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
+export const RAutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
   isExternalLoading = false,
   control,
   name,
@@ -31,19 +40,28 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [busca, setBusca] = useState('');
 
+  // Função que retorna o serviço com base no nome da fonte
+  const getServiceBySource = (source: string) => {
+    return serviceMap[source] || null;
+  };
+
   useEffect(() => {
+
+    let isMounted = true; // Flag para verificar se o componente está montado
+
     const fetchData = async () => {
+      if (!isMounted) return; // Evita executar se o componente foi desmontado
+
       setIsLoading(true);
 
-      const fieldService =
-        source === 'regioes' ? RegioesService : CategoriasService;
+      const fieldService = getServiceBySource(source);
 
       try {
         const result = await fieldService.getAll(1, busca);
         console.log('result', result);
         if (result instanceof Error) {
           alert(result.message);
-        } else {
+        } else if (isMounted) { // Verifica se ainda está montado antes de atualizar o estado
           setOptions(
             result.data.map((item: any) => ({
               id: item.Codigo,
@@ -58,9 +76,13 @@ export const AutoComplete: React.FC<IAutoCompleteRegiaoProps> = ({
       }
     };
     debounce(fetchData);
-    // Função de limpeza para interromper requisições em andamento
 
-    return () => setIsLoading(false);
+    // Função de limpeza para garantir que a flag seja atualizada
+    return () => {
+      isMounted = false;
+      setIsLoading(false); // Certifique-se de que não há atualizações pendentes
+    };
+    
   }, [busca, source, debounce]);
 
   const autoCompleteSelectedOption = useMemo(() => {

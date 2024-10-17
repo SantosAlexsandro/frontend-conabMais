@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ReusableGrid } from '../../shared/forms/ReusableGrid'; // Importe o componente
 import {
   Box,
   Grid2,
@@ -17,13 +18,12 @@ import {
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
-import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
-import { AutoComplete } from '../../shared/forms/RAutoComplete';
-import { RTextField } from '../../shared/forms/RTextField';
-import { RSelect } from '../../shared/forms';
+import { EntitiesService} from '../../shared/services/api/entities/EntitiesService';
+import { RAutoComplete } from '../../shared/forms/RAutoComplete';
+import { WorkOrdersService } from '../../shared/services/api/workOrders/WorkOrdersService';
+
 
 // Definir o schema Yup para o formulário
 const formValidationSchema = yup.object({
@@ -94,9 +94,9 @@ export const WorkOrdersDetail: React.FC = () => {
     setIsLoading(true);
 
     if (id === 'nova') {
-      PessoasService.create(dadosComCategoriasAtualizadas).then((result) => {
+      EntitiesService.create(dadosComCategoriasAtualizadas).then((result) => {
         setIsLoading(false);
-        alert('Entidade Prospect cadastrada com sucesso.');
+        alert('Ordem de Serviço cadastrada com sucesso.');
         navigate('/entidades');
         if (result instanceof Error) {
           console.log('erro', result.message);
@@ -111,7 +111,7 @@ export const WorkOrdersDetail: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Nova Entidade Prospect' : nome}
+      titulo={id === 'nova' ? 'Nova Ordem de Serviço' : nome}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           textoBotaoNovo='Nova'
@@ -119,7 +119,7 @@ export const WorkOrdersDetail: React.FC = () => {
           mostrarBotaoNovo={id !== 'nova'}
           mostrarBotaoApagar={id !== 'nova'}
           aoClicarEmSalvar={handleSubmit(onSubmit)}
-          aoClicarEmVoltar={() => navigate('/entidades')}
+          aoClicarEmVoltar={() => navigate('/ordens-de-servico')}
           aoClicarEmNovo={() => navigate('/entidades/detalhe/nova')}
         />
       }
@@ -141,111 +141,52 @@ export const WorkOrdersDetail: React.FC = () => {
             <Grid2>
               <Typography variant='h6'>Geral</Typography>
             </Grid2>
+
+            {/* Entidade */}
             <Grid2 container direction='row' spacing={2}>
-              <Grid2
-                sx={{
-                  width: {
-                    xs: '100%',
-                    sm: '100%',
-                    md: '50%',
-                    lg: '33%',
-                    xl: '25%',
-                  },
-                }}
-              >
-                <RTextField
-                  fullWidth
-                  name='Nome'
-                  disabled={isLoading}
-                  label='Nome completo'
-                />
-              </Grid2>
-            </Grid2>
-            <Grid2 container direction='row' spacing={2}>
-              <Grid2
-                sx={{
-                  width: {
-                    xs: '100%',
-                    sm: '100%',
-                    md: '50%',
-                    lg: '33%',
-                    xl: '25%',
-                  },
-                }}
-              >
-                <AutoComplete
+              <ReusableGrid>
+                <RAutoComplete
                   control={control}
                   isExternalLoading={isLoading}
                   name='CodigoRegiao'
-                  label='Região'
-                  source='regioes'
+                  label='Entidade'
+                  source='EntitiesService'
                 />
-              </Grid2>
+              </ReusableGrid>
             </Grid2>
+
+            {/* Tipo Ordem de Serviço */}
             <Grid2 container direction='row' spacing={2}>
-              <Grid2
-                sx={{
-                  width: {
-                    xs: '100%',
-                    sm: '100%',
-                    md: '50%',
-                    lg: '33%',
-                    xl: '25%',
-                  },
-                }}
-              >
-                <RSelect
-                  name='CaracteristicaImovel'
-                  label='Característica do Imóvel'
-                  options={[
-                    { value: 1, label: 'Residencial' },
-                    { value: 2, label: 'Comercial' },
-                    { value: 3, label: 'Misto' },
-                  ]}
+              <ReusableGrid>
+                <RAutoComplete
+                  control={control}
+                  isExternalLoading={isLoading}
+                  name='CodigoRegiao'
+                  label='Tipo Ordem de Serviço'
+                  source='RegioesService'
                 />
-              </Grid2>
+              </ReusableGrid>
             </Grid2>
 
-            <Typography variant='h6'>Categorias</Typography>
-            <Grid2  direction='column' spacing={2}>
-              {fields.map((categoria, index) => (
-                <Grid2 container key={categoria.id} justifyContent='flex-start'>
-                  {/* Campo Código */}
-                  <Grid2
-                    sx={{
-                      width: {
-                        xs: '70%',
-                        sm: '70%',
-                        md: '50%',
-                        lg: '33%',
-                        xl: '25%',
-                      },
-                      paddingBottom: 2,
-                    }}
-                  >
-                    <AutoComplete
-                      control={control}
-                      isExternalLoading={isLoading}
-                      name={`Categorias[${index}].Codigo`}
-                      label='Categoria da Entidade'
-                      source = 'categorias'
-                    />
-                  </Grid2>
-
-                  {/* Botão Remover */}
-                  <Grid2>
-                    <Button onClick={() => remove(index)}>Remover</Button>
-                  </Grid2>
-                </Grid2>
-              ))}
-
-              {/* Botão para adicionar nova categoria */}
-              <Grid2 sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button onClick={handleAddCategoria}>
-                  Adicionar Categoria
-                </Button>
-              </Grid2>
+            <Grid2>
+              <Typography variant='h6'>Produto da Ordem</Typography>
             </Grid2>
+
+            {/* Produto */}
+            <Grid2 container direction='row' spacing={2}>
+              <ReusableGrid>
+                <RAutoComplete
+                  control={control}
+                  isExternalLoading={isLoading}
+                  name='CodigoRegiao'
+                  label='Produto'
+                  source='RegioesService'
+                />
+              </ReusableGrid>
+            </Grid2>
+
+
+
           </Grid2>
         </Box>
       </FormProvider>

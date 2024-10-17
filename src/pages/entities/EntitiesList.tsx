@@ -18,7 +18,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
   IListagemPessoa,
-  PessoasService,
+  EntitiesService,
 } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDaListagem } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
@@ -62,7 +62,7 @@ export const EntitiesList: React.FC = () => {
     setIsLoading(true);
 
     debounce(() => {
-      PessoasService.getAll(pagina, busca).then((result) => {
+      EntitiesService.getAll(pagina, busca).then((result) => {
         setIsLoading(false);
 
         if (result instanceof Error) {
@@ -80,7 +80,7 @@ export const EntitiesList: React.FC = () => {
   /*
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      PessoasService.deleteById(id).then((result) => {
+      EntitiesService.deleteById(id).then((result) => {
         if (result instanceof Error) {
           alert(result.message);
         } else {

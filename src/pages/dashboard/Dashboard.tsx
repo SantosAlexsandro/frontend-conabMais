@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Grid, Icon, ListItemIcon, Typography } from '@mui/material';
 
 // import { CidadesService } from '../../shared/services/api/cidades/CidadesService';
-import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
+import { EntitiesService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDaListagem } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
@@ -28,7 +28,7 @@ export const Dashboard = () => {
           setTotalCountCidades(result.totalCount);
         }
       });*/
-    PessoasService.getAll(1)
+    EntitiesService.getAll(1)
       .then((result) => {
         setIsLoadingPessoas(false);
 
@@ -56,7 +56,7 @@ export const Dashboard = () => {
               <Card>
                 <CardContent>
                   <Typography variant='h5' align='center'>
-                    Total de Entidades Prospects
+                   Entidades Prospects
                   </Typography>
 
                   <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
@@ -80,7 +80,7 @@ export const Dashboard = () => {
               <Card>
                 <CardContent>
                   <Typography variant='h5' align='center'>
-                    Total de Ocorrências Externas
+                    Ocorrências Externas
                   </Typography>
 
                   <Box padding={6} display='flex' justifyContent='center' alignItems='center'>

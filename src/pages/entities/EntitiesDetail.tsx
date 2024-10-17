@@ -20,8 +20,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
-import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
-import { AutoComplete } from '../../shared/forms/RAutoComplete';
+import { EntitiesService } from '../../shared/services/api/entities/EntitiesService';
+import { RAutoComplete } from '../../shared/forms/RAutoComplete';
 import { RTextField } from '../../shared/forms/RTextField';
 import { RSelect } from '../../shared/forms';
 
@@ -94,7 +94,7 @@ export const EntitiesDetail: React.FC = () => {
     setIsLoading(true);
 
     if (id === 'nova') {
-      PessoasService.create(dadosComCategoriasAtualizadas).then((result) => {
+      EntitiesService.create(dadosComCategoriasAtualizadas).then((result) => {
         setIsLoading(false);
         alert('Entidade Prospect cadastrada com sucesso.');
         navigate('/entidades');
@@ -173,12 +173,12 @@ export const EntitiesDetail: React.FC = () => {
                   },
                 }}
               >
-                <AutoComplete
+                <RAutoComplete
                   control={control}
                   isExternalLoading={isLoading}
                   name='CodigoRegiao'
                   label='Região'
-                  source='regioes'
+                  source='RegioesService'
                 />
               </Grid2>
             </Grid2>
@@ -223,12 +223,12 @@ export const EntitiesDetail: React.FC = () => {
                       paddingBottom: 2,
                     }}
                   >
-                    <AutoComplete
+                    <RAutoComplete
                       control={control}
                       isExternalLoading={isLoading}
                       name={`Categorias[${index}].Codigo`}
                       label='Categoria da Entidade'
-                      source = 'categorias'
+                      source = 'CategoriasService'
                     />
                   </Grid2>
 
