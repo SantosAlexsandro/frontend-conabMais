@@ -57,7 +57,7 @@ export const WorkOrdersList = () => {
           console.log(result);
 
           setTotalCount(result.totalCount);
-          // setRows(result.data);
+          setRows(result.data);
         }
       });
     });
@@ -96,7 +96,6 @@ export const WorkOrdersList = () => {
               <TableCell>Número</TableCell>
               <TableCell>Entidade</TableCell>
               <TableCell>Tipo OS</TableCell>
-              <TableCell>Produto</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -108,12 +107,14 @@ export const WorkOrdersList = () => {
                   </IconButton>
                   <IconButton
                     size='small'
-                    onClick={() => navigate(`/items/detail/${row.id}`)}
+                    onClick={() => navigate('/')}
                   >
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{row.Codigo}</TableCell>
+                <TableCell>{row.Numero}</TableCell>
+                <TableCell>{row.CodigoEntidade}</TableCell>
+                <TableCell>{row.CodigoTipoOrdServ}</TableCell>
               </TableRow>
             ))}
           </TableBody>

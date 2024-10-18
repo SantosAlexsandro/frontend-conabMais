@@ -3,9 +3,11 @@ import { Api } from '../axios-config';
 
 export interface IListagemOS {
   id: number;
-  Codigo: string;
+  Numero: string;
   Nome: string;
   CodigoEntidade: string;
+  CodigoProduto: string;
+  CodigoTipoOrdServ: string;
 }
 
 
